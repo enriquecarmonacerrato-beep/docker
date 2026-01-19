@@ -1,0 +1,16 @@
+FROM node:20
+
+WORKDIR /app
+
+# Copiamos primero los package.json
+COPY package*.json ./
+
+# Instalamos dependencias dentro del contenedor
+RUN npm install
+
+# Copiamos el resto del código
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "index.js"]

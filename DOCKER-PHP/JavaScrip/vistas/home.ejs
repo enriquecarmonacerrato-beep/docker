@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Contador de Clicks</title>
+  <!-- Script para manejar clicks -->
+  <script src="/click.js" defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f9f9f9;
+    }
+    h1 { color: #333; }
+    #clickBtn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #clickBtn:hover {
+      background-color: #2980b9;
+    }
+    a { color: #3498db; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Contador de Clicks</h1>
+
+  <!-- Mostrar el contador inicial -->
+  <p>Clicks totales: <span id="clickCount"><%= clickCount %></span></p>
+
+  <!-- Botón para incrementar clicks -->
+  <button id="clickBtn">Haz Click</button>
+
+  <!-- Enlace a los logs -->
+  <p><a href="/log.html">Ver logs</a></p>
+
+  <!-- Script inline para actualizar contador al cargar -->
+  <script>
+    const countSpan = document.getElementById("clickCount");
+    const btn = document.getElementById("clickBtn");
+
+    // Función para actualizar contador desde la API
+    async function updateCount() {
+      try {
+        const res = await fetch("/api/");
+        const data = await res.json();
+        countSpan.textContent = data.clickCount;
+      } catch (err) {
+        console.error("Error cargando contador:", err);
+      }
+    }
+
+    // Evento click
+    btn.addEventListener("click", async () => {
+      try {
+        const res = await fetch("/api/click", { method: "POST" });
+        const data = await res.json();
+        countSpan.textContent = data.clickCount;
+      } catch (err) {
+        console.error("Error enviando click:", err);
+      }
+    });
+
+    // Inicializa el contador al cargar la página
+    updateCount();
+  </script>
+</body>
+</html>

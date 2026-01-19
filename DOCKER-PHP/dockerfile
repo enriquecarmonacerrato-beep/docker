@@ -1,0 +1,24 @@
+FROM php:8.2-fpm
+
+
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    libonig-dev \
+    && docker-php-ext-install pdo pdo_mysql
+
+
+# Instalar cliente MySQL + extensión mysqli
+RUN apt-get update \
+ && apt-get install -y default-mysql-client \
+ && docker-php-ext-install mysqli
+
+ RUN apt-get update && apt-get install -y \
+        libzip-dev \
+        unzip \
+        git \
+        && docker-php-ext-install pdo pdo_mysql \
+        && pecl install redis \
+        && docker-php-ext-enable redis \
+        && rm -rf /var/lib/apt/lists/*
+
+

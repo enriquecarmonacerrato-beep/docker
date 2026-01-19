@@ -1,0 +1,5 @@
+ups.mfr: Dummy
+ups.model: Virtual UPS
+ups.status: OL
+battery.charge: 100
+battery.runtime: 3600

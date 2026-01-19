@@ -1,0 +1,3 @@
+mkdir -p /run/nut
+chown nut:nut /run/nut
+chmod 755 /run/nut

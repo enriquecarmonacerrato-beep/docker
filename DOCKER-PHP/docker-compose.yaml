@@ -1,0 +1,95 @@
+version: "3.8"
+
+services:
+  paginaweb:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    networks:
+      - mi-red
+    volumes:
+      - ./web:/etc/nginx/conf.d
+      - ./php:/www/public/
+
+  php:
+    networks:
+      - mi-red
+    build: .
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./php:/www/public/
+
+  basededatos:
+    networks:
+      - mi-red
+    image: mysql:8.1
+    volumes:
+      - mysqldata:/var/lib/mysql
+    ports:
+      - "4306:3306"
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: kike1234
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: 1234
+      MYSQL_DATABASE: docker-php
+      MYSQL_SSL_MODE: DISABLED
+
+  cache:
+    networks:
+      - mi-red
+    image: redis:latest
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+
+
+  node:
+    networks:
+      - mi-red
+    build: 
+      context: ./JavaScrip
+      dockerfile: dockerfile
+    container_name: node_app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    volumes:
+      - ./JavaScrip:/app
+      - /app/node_modules 
+    restart: always
+    depends_on:
+      - basededatos
+      - cache
+    
+  nut:
+    build: .
+    container_name: nut-server
+    restart: unless-stopped
+    ports:
+      - "3493:3493"
+    environment:
+      - MODE=standalone
+    # Montamos la carpeta para poder editar configs desde host
+    volumes:
+      - ./nut:/etc/nut
+    
+
+
+    
+volumes:
+  mysqldata: {}
+  redisdata: {}
+
+networks:
+  mi-red:
+    driver: bridge
+
+
+
+

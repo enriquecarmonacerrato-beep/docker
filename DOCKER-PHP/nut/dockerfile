@@ -1,0 +1,26 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    apt-get install -y nut && \
+    rm -rf /var/lib/apt/lists/*
+
+# Directorio runtime
+RUN mkdir -p /run/nut && \
+    chown nut:nut /run/nut && \
+    chmod 755 /run/nut
+
+# Configuración
+COPY nut.conf /etc/nut/nut.conf
+COPY ups.conf /etc/nut/ups.conf
+COPY upsd.users /etc/nut/upsd.users
+COPY upsmon.conf /etc/nut/upsmon.conf
+
+RUN chmod 600 /etc/nut/upsd.users
+
+EXPOSE 3493
+
+# Arranque correcto de NUT
+CMD ["sh", "-c", "upsdrvctl start && upsd && upsmon -D"]
+
+
+
